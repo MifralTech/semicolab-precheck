@@ -1,0 +1,46 @@
+name: SemiCoLab Precheck
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  precheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout tile repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install OSS CAD Suite
+        uses: YosysHQ/setup-oss-cad-suite@v3
+        with:
+          version: '20241126'
+
+      - name: Install Python dependencies
+        run: pip install pyyaml weasyprint
+
+      - name: Install netlistsvg
+        run: npm install -g netlistsvg
+
+      - name: Clone precheck engine
+        run: git clone https://github.com/serolugo/semicolab-precheck-engine _engine
+
+      - name: Run precheck
+        run: |
+          python _engine/veriflow/cli.py precheck \
+            --repo . \
+            --run-number ${{ github.run_number }} \
+            --commit ${{ github.sha }} \
+            --author ${{ github.actor }}
+
+      - name: Commit results
+        if: always() && github.repository != 'mifral/semicolab-precheck'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add outputs/ README.md
+          git diff --cached --quiet || git commit -m "chore: precheck results [skip ci]"
+          git push
