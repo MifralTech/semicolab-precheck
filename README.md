@@ -1,3 +1,3 @@
 # SemiCoLab IP Tile
 
-> ⚠️ Instructions under construction.
+> Instructions under construction.

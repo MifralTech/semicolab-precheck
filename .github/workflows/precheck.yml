@@ -43,7 +43,7 @@ jobs:
 
       # ── Clone precheck engine ─────────────────────────────────────────────
       - name: Clone precheck engine
-        run: git clone https://github.com/serolugo/semicolab-precheck-engine.git _engine
+        run: git clone https://github.com/MifralTech/semicolab-precheck-engine.git _engine
 
       # ── Run precheck ──────────────────────────────────────────────────────
       - name: Run precheck
